@@ -1,0 +1,2280 @@
+
+<!doctype html>
+<html lang="en">
+<head><script data-od-sandbox-shim>(function(){
+  function makeStore(){
+    var data = {};
+    var api = {
+      getItem: function(k){ return Object.prototype.hasOwnProperty.call(data, k) ? data[k] : null; },
+      setItem: function(k, v){ data[k] = String(v); },
+      removeItem: function(k){ delete data[k]; },
+      clear: function(){ data = {}; },
+      key: function(i){ return Object.keys(data)[i] || null; }
+    };
+    Object.defineProperty(api, 'length', { get: function(){ return Object.keys(data).length; } });
+    return api;
+  }
+  function tryShim(name){
+    var works = false;
+    try { works = !!window[name] && typeof window[name].getItem === 'function'; void window[name].length; }
+    catch (_) { works = false; }
+    if (works) return;
+    try { Object.defineProperty(window, name, { configurable: true, value: makeStore() }); }
+    catch (_) { try { window[name] = makeStore(); } catch (__) {} }
+  }
+  tryShim('localStorage');
+  tryShim('sessionStorage');
+  document.addEventListener('click', (e) => {
+    if (!e.target || !(e.target instanceof Element)) return;
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (href === null) return;
+    var isAnchor = href.startsWith('#') || href === '';
+    if (isAnchor) {
+      e.preventDefault();
+      if (href === '' || href === '#') {
+        window.scrollTo({ top: 0 });
+        history.replaceState(null, '', ' ');
+      } else {
+        var targetId = href.slice(1);
+        var target = targetId ? document.getElementById(targetId) : null;
+        if (target) {
+          target.scrollIntoView();
+          location.hash === href && history.replaceState(null, '', ' ');
+          location.hash = href;
+        }
+      }
+    } else if (link.getAttribute('target') === '_blank') {
+      e.preventDefault();
+      let safe = false;
+      try {
+        var url = new URL(href, location.href);
+        safe =
+          url.protocol === 'http:' ||
+          url.protocol === 'https:' ||
+          url.protocol === 'mailto:';
+      } catch (_) {}
+      safe && window.open(href, '_blank', 'noopener,noreferrer');
+    }
+  });
+})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audi Miami South — Premium Luxury Dealership</title>
+<style>
+/* ── Tokens ── */
+:root {
+  --bg:           oklch(8% 0.005 250);
+  --surface:      #ffffff;
+  --surface-dark: oklch(15% 0.005 250);
+  --surface-mid:  #f5f5f5;
+  --fg:           #ffffff;
+  --fg-dark:      #111111;
+  --muted:        #999999;
+  --muted-dark:   #666666;
+  --border:       rgba(255,255,255,0.12);
+  --border-light: #e0e0e0;
+  --accent:       #bb0a30;
+  --accent-hover: #d4102e;
+  --font-display: 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-body:    'Helvetica Neue', Arial, system-ui, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--fg-dark);
+  background: var(--surface);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { text-decoration: none; color: inherit; }
+button { font: inherit; cursor: pointer; border: none; background: none; }
+
+/* ── Utilities ── */
+.container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+.btn-primary {
+  display: inline-block;
+  padding: 14px 36px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.2s;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-outline {
+  display: inline-block;
+  padding: 14px 36px;
+  border: 1px solid #fff;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.btn-outline:hover { background: #fff; color: var(--bg); }
+.btn-outline-dark {
+  display: inline-block;
+  padding: 14px 36px;
+  border: 1px solid var(--fg-dark);
+  color: var(--fg-dark);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.btn-outline-dark:hover { background: var(--fg-dark); color: #fff; }
+.section-label {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+/* ── Fade-in animation ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Header / Nav ── */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-logo svg { width: 48px; height: 48px; }
+.nav-logo-text {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: #fff; }
+.nav-cta {
+  padding: 10px 24px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.nav-cta:hover { background: #fff; color: #000; }
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+.mobile-toggle span {
+  width: 24px; height: 2px;
+  background: #fff;
+  transition: 0.3s;
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://nar-dam.audi.com/adobe/assets/urn:aaid:aem:5b298046-ea22-4214-926e-85d028a646e7/as/1920x1080-Audi-Miami-South-Hi-Res-01.jpg?width=1024') center/cover no-repeat;
+  filter: brightness(0.35);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 0 24px;
+}
+.hero-eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+.hero h1 strong { font-weight: 700; }
+.hero-sub {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.8);
+  max-width: 600px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+/* ── Featured Vehicle Cards (below hero) ── */
+.featured-strip {
+  background: var(--bg);
+  padding: 60px 0;
+}
+.featured-strip-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.featured-strip-header h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+.vehicle-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.vehicle-card {
+  background: var(--surface-dark);
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+}
+.vehicle-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.vehicle-card-img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.vehicle-card:hover .vehicle-card-img { transform: scale(1.05); }
+.vehicle-card-img-wrap { overflow: hidden; }
+.vehicle-card-body {
+  padding: 24px;
+  color: #fff;
+}
+.vehicle-card-year {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.vehicle-card-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.vehicle-card-price {
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 16px;
+}
+.vehicle-card-cta {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.vehicle-card-cta:hover { color: var(--accent-hover); }
+.vehicle-card-cta::after { content: ' →'; }
+
+/* ── Welcome / Dealership Showcase ── */
+.welcome {
+  padding: 100px 0;
+  background: var(--surface);
+}
+.welcome-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+}
+.welcome-img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+}
+.welcome-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 300;
+  color: var(--fg-dark);
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+.welcome-text h2 strong { font-weight: 700; }
+.welcome-text p {
+  font-size: 16px;
+  color: var(--muted-dark);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.trust-indicators {
+  display: flex;
+  gap: 40px;
+  margin: 32px 0;
+}
+.trust-item {
+  text-align: center;
+}
+.trust-item .trust-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--fg-dark);
+}
+.trust-item .trust-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+  margin-top: 4px;
+}
+
+/* ── Featured Vehicles — Alternating ── */
+.alt-vehicles {
+  background: var(--surface-mid);
+}
+.alt-vehicle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 600px;
+}
+.alt-vehicle:nth-child(even) .alt-vehicle-img { order: 2; }
+.alt-vehicle:nth-child(even) .alt-vehicle-text { order: 1; }
+.alt-vehicle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.alt-vehicle-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 80px;
+  background: var(--surface);
+}
+.alt-vehicle-text .section-label { color: var(--accent); }
+.alt-vehicle-text h3 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.5vw, 38px);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.alt-vehicle-text h3 strong { font-weight: 700; }
+.alt-vehicle-text p {
+  font-size: 16px;
+  color: var(--muted-dark);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.alt-vehicle-features {
+  list-style: none;
+  margin: 16px 0 32px;
+}
+.alt-vehicle-features li {
+  font-size: 14px;
+  color: var(--muted-dark);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.alt-vehicle-features li::before {
+  content: '—';
+  margin-right: 12px;
+  color: var(--accent);
+}
+
+/* ── Inventory Categories ── */
+.inventory-cats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.inv-cat {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  cursor: pointer;
+}
+.inv-cat img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+.inv-cat:hover img { transform: scale(1.08); filter: brightness(0.5); }
+.inv-cat-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px 30px;
+  transition: background 0.4s;
+}
+.inv-cat:hover .inv-cat-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.3) 100%);
+}
+.inv-cat-overlay h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.inv-cat-overlay p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.inv-cat-link {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.inv-cat:hover .inv-cat-link { opacity: 1; transform: translateY(0); }
+.inv-cat-link::after { content: ' →'; }
+
+/* ── Services ── */
+.services {
+  padding: 100px 0;
+  background: var(--surface);
+}
+.services-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.services-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 300;
+  color: var(--fg-dark);
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.service-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+.service-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.service-card:hover img { transform: scale(1.06); }
+.service-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+}
+.service-card-overlay h3 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.service-card-overlay p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* ── Vehicle Spotlight ── */
+.spotlight {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  min-height: 600px;
+  background: var(--bg);
+}
+.spotlight-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.spotlight-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 80px;
+  color: #fff;
+}
+.spotlight-text .section-label { color: var(--accent); }
+.spotlight-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+.spotlight-text h2 strong { font-weight: 700; }
+.spotlight-text p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.spotlight-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.spec-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.spec-item .spec-val {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+.spec-item .spec-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── Dealership Info ── */
+.dealership-info {
+  padding: 100px 0;
+  background: var(--surface);
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  align-items: center;
+}
+.info-img {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+}
+.info-content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+.info-content h2 strong { font-weight: 700; }
+.info-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+  align-items: flex-start;
+}
+.info-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent);
+}
+.info-item-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-dark);
+  margin-bottom: 4px;
+}
+.info-item-value {
+  font-size: 16px;
+  color: var(--fg-dark);
+  line-height: 1.5;
+}
+.map-placeholder {
+  margin-top: 40px;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--surface-mid);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-dark);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Business Hours ── */
+.hours {
+  padding: 80px 0;
+  background: var(--surface-mid);
+}
+.hours-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.hours-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.5vw, 36px);
+  font-weight: 300;
+}
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.hours-card {
+  background: var(--surface);
+  padding: 40px;
+  border: 1px solid var(--border-light);
+}
+.hours-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+}
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-light);
+}
+.hours-row:last-child { border-bottom: none; }
+.hours-day { color: var(--fg-dark); }
+.hours-time { color: var(--muted-dark); }
+
+/* ── Footer ── */
+.site-footer {
+  background: var(--bg);
+  color: #fff;
+  padding: 80px 0 0;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 60px;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+.footer-brand p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  max-width: 300px;
+}
+.footer-col h4 {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 20px;
+}
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  padding: 6px 0;
+  transition: color 0.3s;
+}
+.footer-col a:hover { color: #fff; }
+.footer-social {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+.footer-social a {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  padding: 0;
+}
+.footer-social a:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+.footer-social svg { width: 16px; height: 16px; fill: #fff; }
+.footer-bottom {
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+}
+.footer-legal { display: flex; gap: 24px; }
+.footer-legal a { color: rgba(255,255,255,0.35); transition: color 0.3s; }
+.footer-legal a:hover { color: rgba(255,255,255,0.7); }
+
+/* ── Responsive ── */
+@media (max-width: 1180px) {
+  .vehicle-cards { grid-template-columns: repeat(2, 1fr); }
+  .inventory-cats { grid-template-columns: repeat(2, 1fr); }
+  .inv-cat { aspect-ratio: 3/4; }
+}
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .mobile-toggle { display: flex; }
+  .welcome-grid { grid-template-columns: 1fr; gap: 40px; }
+  .alt-vehicle { grid-template-columns: 1fr; min-height: auto; }
+  .alt-vehicle:nth-child(even) .alt-vehicle-img { order: 0; }
+  .alt-vehicle:nth-child(even) .alt-vehicle-text { order: 0; }
+  .alt-vehicle-text { padding: 48px 40px; }
+  .alt-vehicle-img { aspect-ratio: 16/9; }
+  .spotlight { grid-template-columns: 1fr; }
+  .spotlight-img { aspect-ratio: 16/9; }
+  .spotlight-text { padding: 48px 40px; }
+  .info-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 24px; }
+  .nav-inner { padding: 0 24px; }
+  .hero { min-height: 70vh; }
+  .vehicle-cards { grid-template-columns: 1fr; padding: 0 24px; gap: 16px; }
+  .services-grid { grid-template-columns: 1fr; }
+  .service-card { aspect-ratio: 16/9; }
+  .inventory-cats { grid-template-columns: 1fr; }
+  .inv-cat { aspect-ratio: 16/9; }
+  .hours-grid { grid-template-columns: 1fr; }
+  .alt-vehicle-text { padding: 32px 24px; }
+  .spotlight-text { padding: 32px 24px; }
+  .spotlight-specs { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+}
+@media (max-width: 430px) {
+  .hero h1 { font-size: 28px; }
+  .hero-sub { font-size: 15px; }
+  .btn-primary, .btn-outline, .btn-outline-dark { padding: 12px 28px; font-size: 12px; }
+}
+
+/* ── Mobile menu ── */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.97);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 300;
+}
+.mobile-menu-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="site-header" data-od-id="header">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="30" r="20" stroke="white" stroke-width="3" fill="none"/>
+        <circle cx="73" cy="30" r="20" stroke="white" stroke-width="3" fill="none"/>
+        <circle cx="106" cy="30" r="20" stroke="white" stroke-width="3" fill="none"/>
+        <circle cx="139" cy="30" r="20" stroke="white" stroke-width="3" fill="none"/>
+      </svg>
+      <span class="nav-logo-text">Audi Miami South</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#inventory">Inventory</a></li>
+        <li><a href="#services">Service</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#hours">Hours</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="#contact" class="nav-cta">Schedule a Visit</a>
+    <div class="mobile-toggle" onclick="document.querySelector('.mobile-menu').classList.add('open')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu">
+  <div class="mobile-menu-close" onclick="this.parentElement.classList.remove('open')">✕</div>
+  <a href="#inventory" onclick="this.parentElement.classList.remove('open')">Inventory</a>
+  <a href="#services" onclick="this.parentElement.classList.remove('open')">Service</a>
+  <a href="#about" onclick="this.parentElement.classList.remove('open')">About</a>
+  <a href="#hours" onclick="this.parentElement.classList.remove('open')">Hours</a>
+  <a href="#contact" onclick="this.parentElement.classList.remove('open')">Contact</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero" data-od-id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">South Florida's Premier Luxury Dealership</p>
+    <h1>We're <strong>Redefining</strong><br>Audi Premium</h1>
+    <p class="hero-sub">Experience an unmatched standard of luxury automotive excellence at Miami's most distinguished dealership.</p>
+    <a href="#inventory" class="btn-outline">Explore Inventory</a>
+  </div>
+</section>
+
+<!-- ══ FEATURED VEHICLE CARDS ══ -->
+<section class="featured-strip" data-od-id="featured-strip">
+  <div class="featured-strip-header">
+    <p class="section-label">Current Highlights</p>
+    <h2>Featured Vehicles</h2>
+  </div>
+  <div class="vehicle-cards">
+    <div class="vehicle-card fade-up">
+      <div class="vehicle-card-img-wrap">
+        <img class="vehicle-card-img" src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80" alt="Luxury Sedan">
+      </div>
+      <div class="vehicle-card-body">
+        <p class="vehicle-card-year">2025 New</p>
+        <h3 class="vehicle-card-name">A6 Sedan</h3>
+        <p class="vehicle-card-price">Starting at $58,900</p>
+        <a href="#" class="vehicle-card-cta">View Details</a>
+      </div>
+    </div>
+    <div class="vehicle-card fade-up">
+      <div class="vehicle-card-img-wrap">
+        <img class="vehicle-card-img" src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=600&q=80" alt="Luxury SUV">
+      </div>
+      <div class="vehicle-card-body">
+        <p class="vehicle-card-year">2025 New</p>
+        <h3 class="vehicle-card-name">Q8 SUV</h3>
+        <p class="vehicle-card-price">Starting at $72,400</p>
+        <a href="#" class="vehicle-card-cta">View Details</a>
+      </div>
+    </div>
+    <div class="vehicle-card fade-up">
+      <div class="vehicle-card-img-wrap">
+        <img class="vehicle-card-img" src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&q=80" alt="Luxury Coupe">
+      </div>
+      <div class="vehicle-card-body">
+        <p class="vehicle-card-year">2025 New</p>
+        <h3 class="vehicle-card-name">e-tron GT</h3>
+        <p class="vehicle-card-price">Starting at $106,500</p>
+        <a href="#" class="vehicle-card-cta">View Details</a>
+      </div>
+    </div>
+    <div class="vehicle-card fade-up">
+      <div class="vehicle-card-img-wrap">
+        <img class="vehicle-card-img" src="https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=600&q=80" alt="Luxury Crossover">
+      </div>
+      <div class="vehicle-card-body">
+        <p class="vehicle-card-year">2025 New</p>
+        <h3 class="vehicle-card-name">Q5 Sportback</h3>
+        <p class="vehicle-card-price">Starting at $49,800</p>
+        <a href="#" class="vehicle-card-cta">View Details</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WELCOME / DEALERSHIP SHOWCASE ══ -->
+<section class="welcome" id="about" data-od-id="welcome">
+  <div class="container">
+    <div class="welcome-grid fade-up">
+      <img class="welcome-img" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=900&q=80" alt="Dealership building">
+      <div class="welcome-text">
+        <p class="section-label">Since 1985</p>
+        <h2>Welcome to <strong>Audi Miami South</strong></h2>
+        <p>For nearly four decades, Audi Miami South has set the standard for luxury automotive retail in South Florida. Our state-of-the-art facility in Coral Gables combines world-class service with an inventory curated for the most discerning drivers.</p>
+        <p>Part of The Collection — one of the nation's most respected luxury automotive groups — we deliver an ownership experience that matches the precision of the vehicles we represent.</p>
+        <div class="trust-indicators">
+          <div class="trust-item">
+            <div class="trust-num">38</div>
+            <div class="trust-label">Years of Excellence</div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-num">15K+</div>
+            <div class="trust-label">Vehicles Delivered</div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-num">4.8</div>
+            <div class="trust-label">Customer Rating</div>
+          </div>
+        </div>
+        <a href="#contact" class="btn-outline-dark">Schedule a Visit</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURED VEHICLES — ALTERNATING ══ -->
+<section class="alt-vehicles" data-od-id="alt-vehicles">
+  <div class="alt-vehicle fade-up">
+    <img class="alt-vehicle-img" src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=900&q=80" alt="Luxury sedan in motion">
+    <div class="alt-vehicle-text">
+      <p class="section-label">Performance Flagship</p>
+      <h3>The <strong>RS e-tron GT</strong></h3>
+      <p>646 horsepower. Dual-motor Quattro all-wheel drive. A 0–60 sprint in 3.1 seconds. The RS e-tron GT is where Audi's grand touring heritage meets a fully electric future — without a single compromise.</p>
+      <ul class="alt-vehicle-features">
+        <li>646 hp dual-motor electric powertrain</li>
+        <li>Quattro all-wheel drive</li>
+        <li>238-mile EPA estimated range</li>
+        <li>800V architecture, 270 kW DC fast charging</li>
+      </ul>
+      <a href="#" class="btn-primary">Explore RS e-tron GT</a>
+    </div>
+  </div>
+  <div class="alt-vehicle fade-up">
+    <img class="alt-vehicle-img" src="https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=900&q=80" alt="Luxury SUV parked">
+    <div class="alt-vehicle-text">
+      <p class="section-label">Commanding Presence</p>
+      <h3>The <strong>Q8 SUV</strong></h3>
+      <p>Audi's flagship SUV commands every road it meets. With a singleframe grille that redefines modern luxury and a cabin wrapped in Valcona leather, the Q8 is built for those who lead.</p>
+      <ul class="alt-vehicle-features">
+        <li>3.0L TFSI turbocharged V6</li>
+        <li>Adaptive air suspension</li>
+        <li>10.1" + 8.6" dual MMI touch displays</li>
+        <li>Bang & Olufsen 3D Premium Sound</li>
+      </ul>
+      <a href="#" class="btn-primary">Explore Q8</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INVENTORY CATEGORIES ══ -->
+<section id="inventory" data-od-id="inventory-cats">
+  <div class="inventory-cats">
+    <div class="inv-cat fade-up">
+      <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&q=80" alt="New inventory">
+      <div class="inv-cat-overlay">
+        <h3>New Inventory</h3>
+        <p>Browse our full lineup of factory-fresh vehicles</p>
+        <span class="inv-cat-link">View All New</span>
+      </div>
+    </div>
+    <div class="inv-cat fade-up">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80" alt="Certified pre-owned">
+      <div class="inv-cat-overlay">
+        <h3>Certified Pre-Owned</h3>
+        <p>Inspected. Certified. Backed by warranty.</p>
+        <span class="inv-cat-link">View Pre-Owned</span>
+      </div>
+    </div>
+    <div class="inv-cat fade-up">
+      <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=600&q=80" alt="Special offers">
+      <div class="inv-cat-overlay">
+        <h3>Special Offers</h3>
+        <p>Current lease and finance incentives</p>
+        <span class="inv-cat-link">See Offers</span>
+      </div>
+    </div>
+    <div class="inv-cat fade-up">
+      <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&q=80" alt="Trade-in">
+      <div class="inv-cat-overlay">
+        <h3>Trade-In Program</h3>
+        <p>Get a competitive offer on your current vehicle</p>
+        <span class="inv-cat-link">Value Your Trade</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section class="services" id="services" data-od-id="services">
+  <div class="container">
+    <div class="services-header">
+      <p class="section-label">What We Offer</p>
+      <h2>Premium Services</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-up">
+        <img src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=600&q=80" alt="Service center">
+        <div class="service-card-overlay">
+          <h3>Award-Winning Service</h3>
+          <p>Factory-trained technicians, genuine parts, and a facility designed for precision. Schedule your next visit online.</p>
+          <a href="#" class="btn-outline">Book Service</a>
+        </div>
+      </div>
+      <div class="service-card fade-up">
+        <img src="https://images.unsplash.com/photo-1542362567-b07e54358753?w=600&q=80" alt="Special offers">
+        <div class="service-card-overlay">
+          <h3>Featured Specials</h3>
+          <p>Exclusive seasonal offers on maintenance, accessories, and select new models. Updated monthly.</p>
+          <a href="#" class="btn-outline">View Specials</a>
+        </div>
+      </div>
+      <div class="service-card fade-up">
+        <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=600&q=80" alt="Sell your vehicle">
+        <div class="service-card-overlay">
+          <h3>Sell My Vehicle</h3>
+          <p>Receive a transparent, market-driven valuation for your current vehicle — any make, any model. No obligation.</p>
+          <a href="#" class="btn-outline">Get a Quote</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VEHICLE SPOTLIGHT ══ -->
+<section class="spotlight" data-od-id="spotlight">
+  <img class="spotlight-img" src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=900&q=80" alt="Spotlight vehicle">
+  <div class="spotlight-text fade-up">
+    <p class="section-label">In the Spotlight</p>
+    <h2>The All-New <strong>A8 L</strong></h2>
+    <p>Audi's most sophisticated sedan returns, reimagined for the modern era. Predictive active suspension reads the road ahead. A 10.1-inch OLED display responds to haptic touch. And inside, hand-stitched Valcona leather wraps every surface that your hand might reach.</p>
+    <div class="spotlight-specs">
+      <div class="spec-item">
+        <div class="spec-val">453 hp</div>
+        <div class="spec-label">Horsepower</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-val">3.9s</div>
+        <div class="spec-label">0–60 mph</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-val">AWD</div>
+        <div class="spec-label">Quattro Drive</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-val">48V</div>
+        <div class="spec-label">Mild Hybrid</div>
+      </div>
+    </div>
+    <a href="#" class="btn-outline">Build Your A8 L</a>
+  </div>
+</section>
+
+<!-- ══ DEALERSHIP INFORMATION ══ -->
+<section class="dealership-info" id="contact" data-od-id="dealership-info">
+  <div class="container">
+    <div class="info-grid fade-up">
+      <div>
+        <img class="info-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="Audi Miami South dealership">
+        <div class="map-placeholder">Interactive Map — 2300 SW 8th St, Miami, FL 33135</div>
+      </div>
+      <div class="info-content">
+        <p class="section-label">Visit Us</p>
+        <h2><strong>Audi Miami South</strong><br>by The Collection</h2>
+        <div class="info-item">
+          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div>
+            <div class="info-item-label">Address</div>
+            <div class="info-item-value">2300 SW 8th Street<br>Miami, FL 33135</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <div>
+            <div class="info-item-label">Sales</div>
+            <div class="info-item-value">(305) 444-3463</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <div>
+            <div class="info-item-label">Service</div>
+            <div class="info-item-value">(305) 444-3464</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+          <div>
+            <div class="info-item-label">Email</div>
+            <div class="info-item-value">concierge@audimiamisouth.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BUSINESS HOURS ══ -->
+<section class="hours" id="hours" data-od-id="hours">
+  <div class="container">
+    <div class="hours-header">
+      <p class="section-label">Plan Your Visit</p>
+      <h2>Business Hours</h2>
+    </div>
+    <div class="hours-grid fade-up">
+      <div class="hours-card">
+        <h3>Sales</h3>
+        <div class="hours-row"><span class="hours-day">Monday – Friday</span><span class="hours-time">9:00 AM – 8:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">9:00 AM – 6:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">12:00 PM – 5:00 PM</span></div>
+      </div>
+      <div class="hours-card">
+        <h3>Service</h3>
+        <div class="hours-row"><span class="hours-day">Monday – Friday</span><span class="hours-time">7:30 AM – 6:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">8:00 AM – 5:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">Closed</span></div>
+      </div>
+      <div class="hours-card">
+        <h3>Parts</h3>
+        <div class="hours-row"><span class="hours-day">Monday – Friday</span><span class="hours-time">7:30 AM – 6:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">8:00 AM – 5:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">Closed</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer" data-od-id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Audi Miami South</h3>
+        <p>Part of The Collection — South Florida's most distinguished luxury automotive group. Serving Miami, Coral Gables, and beyond since 1985.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"/><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="#000"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Inventory</h4>
+        <a href="#">New Vehicles</a>
+        <a href="#">Pre-Owned</a>
+        <a href="#">Certified Pre-Owned</a>
+        <a href="#">Special Offers</a>
+        <a href="#">Value Your Trade</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#">Schedule Service</a>
+        <a href="#">Order Parts</a>
+        <a href="#">Financing</a>
+        <a href="#">Audi Care</a>
+        <a href="#">Collision Center</a>
+      </div>
+      <div class="footer-col">
+        <h4>Dealership</h4>
+        <a href="#">About Us</a>
+        <a href="#">Meet the Team</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+        <a href="#">Directions</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Audi Miami South by The Collection. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+const header = document.querySelector('.site-header');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y > 100) {
+    header.style.background = 'rgba(0,0,0,0.97)';
+  } else {
+    header.style.background = 'rgba(0,0,0,0.92)';
+  }
+  lastScroll = y;
+}, { passive: true });
+
+document.querySelectorAll('.vehicle-card').forEach((card, i) => {
+  card.style.transitionDelay = `${i * 0.12}s`;
+});
+document.querySelectorAll('.inv-cat').forEach((card, i) => {
+  card.style.transitionDelay = `${i * 0.1}s`;
+});
+</script>
+
+<!-- n8n Chat Widget -->
+<div id="n8n-chat" style="position: fixed; bottom: 0; right: 0; z-index: 9999; pointer-events: none;"></div>
+
+<style>
+/* n8n Chat Widget Styles */
+:root {
+  --chat--color--primary: #2563eb;
+  --chat--color--primary-shade-50: #1d4ed8;
+  --chat--color--primary--shade-100: #1e40af;
+  --chat--color--secondary: #7c3aed;
+  --chat--color-secondary-shade-50: #6d28d9;
+  --chat--color-white: #ffffff;
+  --chat--color-light: #f9fafb;
+  --chat--color-light-shade-50: #f5f5f5;
+  --chat--color-light-shade-100: #e5e7eb;
+  --chat--color-medium: #9ca3af;
+  --chat--color-dark: #1a1a1a;
+  --chat--color-disabled: #9ca3af;
+  --chat--color-typing: #6b7280;
+  --chat--header--background: #ffffff;
+  --chat--header--color: #1a1a1a;
+  --chat--header--padding: 16px;
+  --chat--header--border-bottom: none;
+  --chat--window--width: 380px;
+  --chat--window--height: 600px;
+  --chat--spacing: 16px;
+  --chat--border-radius: 24px;
+  --chat--transition-duration: 0.2s;
+  --chat--message--font-size: 14px;
+  --chat--message--padding: 12px 16px;
+  --chat--message--border-radius: 18px;
+  --chat--message-line-height: 1.4;
+  --chat--message--bot--background: #f5f5f5;
+  --chat--message--bot--color: #1a1a1a;
+  --chat--message--bot--border: none;
+  --chat--message--user--background: #2563eb;
+  --chat--message--user--color: #ffffff;
+  --chat--message--user--border: none;
+  --chat--input--background: #f9fafb;
+  --chat--input--border: 1px solid #e5e7eb;
+  --chat--input--border-radius: 24px;
+  --chat--input--text-color: #1a1a1a;
+  --chat--input--placeholder-color: #9ca3af;
+  --chat--textarea--height: 44px;
+  --chat--toggle--background: #ffffff;
+  --chat--toggle--hover--background: #ffffff;
+  --chat--toggle--active--background: #ffffff;
+  --chat--toggle--color: #ffffff;
+  --chat--toggle--size: 56px;
+  --chat--button--background: #2563eb;
+  --chat--button--color: #ffffff;
+  --chat--button--border-radius: 24px;
+  --chat--input--container--background: transparent;
+  --chat--input--container--border: none;
+  --chat--input--container--border-radius: 0;
+  --chat--input--container--padding: 0;
+}
+
+@keyframes messageBotSlideIn {
+  0% { opacity: 0; transform: translateX(-8px) scale(0.96); }
+  60% { opacity: 1; transform: translateX(2px) scale(1.01); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes messageUserSlideIn {
+  0% { opacity: 0; transform: translateX(8px) scale(0.96); }
+  60% { opacity: 1; transform: translateX(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.n8n-chat .chat-window {
+  border-radius: 24px !important;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 12px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,1), inset 0 -2px 4px rgba(0,0,0,0.08) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 50%, rgba(250,250,255,0.9) 100%) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1.5px solid rgba(255,255,255,0.8) !important;
+  font-family: Inter, 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  bottom: 96px !important;
+  right: 24px !important;
+  z-index: 9999 !important;
+  width: 380px !important;
+  max-width: 380px !important;
+  height: 600px !important;
+  max-height: 600px !important;
+}
+
+.n8n-chat .chat-messages-list {
+  padding: 16px !important;
+  gap: 8px !important;
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+  margin-top: 0 !important;
+  display: block !important;
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+}
+
+.n8n-chat .chat-body {
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+
+.n8n-chat .chat-messages-list,
+.n8n-chat .chat-body,
+.n8n-chat .chat-messages {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.n8n-chat .chat-messages-list::-webkit-scrollbar,
+.n8n-chat .chat-body::-webkit-scrollbar,
+.n8n-chat .chat-messages::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.n8n-chat .chat-footer,
+.n8n-chat .chat-input-container,
+.n8n-chat .chat-input-panel {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-bot {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  width: fit-content !important;
+  max-width: calc(100% - 32px) !important;
+  overflow: hidden !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-body,
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-markdown {
+  background: #f5f5f5 !important;
+  color: #1a1a1a !important;
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  display: inline-block !important;
+  width: auto !important;
+  min-width: fit-content !important;
+  max-width: calc(100% - 32px) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  box-sizing: border-box !important;
+  animation: messageBotSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-markdown p,
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-body p {
+  margin: 0 0 0.5em !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-markdown p:last-child,
+.n8n-chat .chat-message.chat-message-from-bot .chat-message-body p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-user {
+  display: flex !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-user .chat-message-body,
+.n8n-chat .chat-message.chat-message-from-user .chat-message-markdown {
+  background: #0b64bd !important;
+  color: #ffffff !important;
+  border-radius: 18px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  display: inline-block !important;
+  width: auto !important;
+  min-width: fit-content !important;
+  max-width: 85% !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  animation: messageUserSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.n8n-chat .chat-message.chat-message-from-user .chat-message-markdown p,
+.n8n-chat .chat-message.chat-message-from-user .chat-message-markdown > *:last-child,
+.n8n-chat .chat-message.chat-message-from-user .chat-message-body p,
+.n8n-chat .chat-message.chat-message-from-user .chat-message-body > *:last-child {
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.n8n-chat .chat-message-from-user + .chat-message-from-bot,
+.n8n-chat .chat-message-from-bot + .chat-message-from-user {
+  margin-top: 16px !important;
+}
+
+.n8n-chat .chat-message .chat-message-markdown img:not(.bot-label-icon),
+.n8n-chat .chat-message .chat-message-body img:not(.bot-label-icon) {
+  display: block !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: 300px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+  margin: 8px 0 !important;
+  object-fit: contain !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.n8n-chat .chat-message .chat-message-markdown img:not(.bot-label-icon):hover,
+.n8n-chat .chat-message .chat-message-body img:not(.bot-label-icon):hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
+  transform: scale(1.02) !important;
+}
+
+.n8n-chat .chat-message-from-bot .chat-message-markdown img:not(.bot-label-icon),
+.n8n-chat .chat-message-from-bot .chat-message-body img:not(.bot-label-icon) {
+  max-width: 280px !important;
+}
+
+.n8n-chat .chat-message-from-user .chat-message-markdown img:not(.bot-label-icon),
+.n8n-chat .chat-message-from-user .chat-message-body img:not(.bot-label-icon) {
+  max-width: 220px !important;
+}
+
+.n8n-chat .chat-message img[src='']:not(.bot-label-icon),
+.n8n-chat .chat-message img:not([src]):not(.bot-label-icon) {
+  background: #f0f0f0 !important;
+  min-width: 100px !important;
+  min-height: 100px !important;
+}
+
+.n8n-chat .chat-input {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 12px 16px !important;
+  background: rgba(0,0,0,0.06) !important;
+  border: none !important;
+  border-radius: 22px !important;
+  padding: 10px 8px 10px 16px !important;
+  align-items: center !important;
+  height: 46px !important;
+  max-height: 46px !important;
+  box-sizing: border-box !important;
+  width: calc(100% - 32px) !important;
+  max-width: calc(100% - 32px) !important;
+  overflow: hidden !important;
+}
+
+.n8n-chat .chat-input:focus-within {
+  background: rgba(0,0,0,0.09) !important;
+}
+
+.n8n-chat .chat-inputs {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 8px !important;
+  height: 100% !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.n8n-chat .chat-inputs-controls {
+  flex-shrink: 0 !important;
+}
+
+.n8n-chat .chat-input textarea {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: transparent !important;
+  color: #1a1a1a !important;
+  font-size: 15px !important;
+  font-family: Inter, 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  flex: 1 !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  height: 24px !important;
+  resize: none !important;
+  border: none !important;
+  outline: none !important;
+  line-height: 24px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  caret-color: #2563eb !important;
+}
+
+.n8n-chat .chat-input textarea::placeholder {
+  color: #a0a0b0 !important;
+  font-size: 15px !important;
+  opacity: 1 !important;
+}
+
+.n8n-chat .chat-input textarea:focus::placeholder {
+  opacity: 0.5 !important;
+}
+
+.n8n-chat .chat-input button,
+.n8n-chat .chat-input-send-button {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(160,160,180,0.35) !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+}
+
+.n8n-chat .chat-input button:not([disabled]),
+.n8n-chat .chat-input-send-button:not([disabled]) {
+  background: #1a1a1a !important;
+}
+
+.n8n-chat .chat-input button:not([disabled]):hover,
+.n8n-chat .chat-input-send-button:not([disabled]):hover {
+  background: #111111 !important;
+  transform: scale(1.05) !important;
+}
+
+.n8n-chat .chat-input button svg,
+.n8n-chat .chat-input-send-button svg {
+  color: rgba(80,80,100,0.5) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.n8n-chat .chat-input button:not([disabled]) svg,
+.n8n-chat .chat-input-send-button:not([disabled]) svg {
+  color: #ffffff !important;
+}
+
+.n8n-chat .chat-input button[disabled] svg,
+.n8n-chat .chat-input-send-button[disabled] svg {
+  color: rgba(80,80,100,0.4) !important;
+}
+
+.n8n-chat .chat-window-toggle {
+  background-color: #ffffff !important;
+  border-radius: 50% !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3) !important;
+  width: 56px !important;
+  height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.n8n-chat .chat-window-toggle:hover {
+  background-color: #ffffff !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 3px 12px rgba(0,0,0,0.4) !important;
+}
+
+.n8n-chat .chat-window-toggle > svg:not(.custom-icon) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+.n8n-chat .chat-window-toggle > svg.custom-icon {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 24px !important;
+  height: 24px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.n8n-chat .chat-window-toggle > svg.custom-icon path {
+  fill: #1a1a1a !important;
+}
+
+.n8n-chat .chat-window-toggle > img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.n8n-chat .chat-message-agent-info,
+.n8n-chat .chat-message .agent-label {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #6b7280 !important;
+  gap: 8px !important;
+}
+
+.n8n-chat .chat-message-agent-info .agent-icon,
+.n8n-chat .chat-message .agent-icon {
+  border-radius: 8px !important;
+  background: #1a1a1a !important;
+}
+
+.n8n-chat .chat-header {
+  display: none !important;
+}
+
+.n8n-chat .chat-window-content,
+.n8n-chat .chat-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.n8n-chat .chat-body,
+.n8n-chat .chat-messages {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.n8n-chat .chat-input-panel,
+.n8n-chat .chat-input-container {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.n8n-chat .chat-footer {
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  margin-top: auto !important;
+}
+
+.n8n-chat [class*='powered'],
+.n8n-chat a[href*='n8n'] {
+  display: none !important;
+}
+
+.n8n-chat .bot-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  margin-left: 2px;
+  white-space: nowrap;
+}
+
+.n8n-chat .chat-message-markdown img.bot-label-icon,
+.n8n-chat .chat-message-body img.bot-label-icon,
+.n8n-chat img.bot-label-icon {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: inline-block !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  cursor: default !important;
+  vertical-align: middle !important;
+}
+
+.n8n-chat .bot-label-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.n8n-chat .chat-message-typing {
+  margin-top: 8px !important;
+}
+
+.n8n-chat .powered-by-text {
+  display: block !important;
+  text-align: center;
+  font-size: 11px;
+  color: #9ca3af;
+  padding: 8px 16px 12px;
+  font-family: Inter, 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.n8n-chat .powered-by-text strong {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+#chat-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 100000;
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#chat-lightbox-img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+}
+
+#chat-lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111111;
+}
+
+@media screen and (max-width: 500px) {
+  .n8n-chat .chat-window {
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 90px !important;
+    width: calc(100vw - 32px) !important;
+    height: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    max-height: calc(100vh - 106px) !important;
+    max-height: calc(100dvh - 106px) !important;
+    border-radius: 24px !important;
+    margin: 0 !important;
+  }
+  .n8n-chat .chat-layout {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .n8n-chat .chat-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+  }
+  .n8n-chat .chat-footer {
+    flex-shrink: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+  }
+  .n8n-chat .chat-input {
+    margin: 12px !important;
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+  }
+  .n8n-chat .chat-window-toggle {
+    bottom: 20px !important;
+    right: 20px !important;
+    position: fixed !important;
+    z-index: 10001 !important;
+  }
+  .n8n-chat .chat-message .chat-message-markdown img:not(.bot-label-icon),
+  .n8n-chat .chat-message .chat-message-body img:not(.bot-label-icon),
+  .n8n-chat .chat-message-from-bot .chat-message-markdown img:not(.bot-label-icon),
+  .n8n-chat .chat-message-from-bot .chat-message-body img:not(.bot-label-icon) {
+    max-width: 100% !important;
+    max-height: 250px !important;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 768px) {
+  .n8n-chat .chat-window {
+    width: 350px !important;
+    height: 500px !important;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .n8n-chat .chat-window {
+    left: 8px !important;
+    right: 8px !important;
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+  .n8n-chat .chat-input {
+    margin: 8px !important;
+    width: calc(100% - 16px) !important;
+    padding: 8px 6px 8px 12px !important;
+  }
+  .bot-label-text {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .n8n-chat .chat-window {
+    top: 8px !important;
+    bottom: 70px !important;
+    max-height: calc(100vh - 78px) !important;
+    max-height: calc(100dvh - 78px) !important;
+  }
+  .n8n-chat .chat-window-toggle {
+    bottom: 8px !important;
+  }
+}
+</style>
+
+<script type="module">
+const N8N_CHAT_CDN = 'https://cdn.jsdelivr.net/npm/@n8n/chat@1.21.0/dist/chat.bundle.es.js';
+
+const CHAT_CONFIG = {
+  companyName: 'ProSalesAI',
+  botName: 'Michael | Audi Product Specialist',
+  webhookUrl: 'https://n8n.prosalesia.com/webhook/4c97a51e-e7c1-4fb9-9012-f9156078e146/chat',
+  welcomeMessage: "Welcome to Audi Miami South.\n\nWhether you're exploring the latest Audi models, considering a trade-in, or scheduling a test drive, I'm here to provide a personalized experience.\n\nHow can I assist you today?",
+  bubbleIcon: 'https://storage.googleapis.com/msgsndr/JKTkjhHpV1o0GY09LCar/media/696972520f8a0898ae5f0841.webp',
+  agentIcon: 'https://storage.googleapis.com/msgsndr/JKTkjhHpV1o0GY09LCar/media/696972520f8a0898ae5f0841.webp',
+};
+
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.floor(Math.random() * 16);
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+function isChatOpen(chatWindow) {
+  if (!(chatWindow instanceof HTMLElement)) return false;
+  return getComputedStyle(chatWindow).display !== 'none';
+}
+
+let senderIdentifier = localStorage.getItem('sender_identifier');
+const originalFetch = window.fetch.bind(window);
+
+function ensureSenderIdentifier() {
+  if (!senderIdentifier) {
+    senderIdentifier = generateUUID();
+    localStorage.setItem('sender_identifier', senderIdentifier);
+  }
+}
+
+window.fetch = (input, init) => {
+  const url = typeof input === 'string' ? input : input instanceof Request ? input.url : input.toString();
+  if (url.includes(CHAT_CONFIG.webhookUrl) && init?.body && senderIdentifier && typeof init.body === 'string') {
+    try {
+      const body = JSON.parse(init.body);
+      body.metadata = { ...body.metadata, sender_identifier: senderIdentifier };
+      return originalFetch(input, { ...init, body: JSON.stringify(body) });
+    } catch {}
+  }
+  return originalFetch(input, init);
+};
+
+function customizeToggleButton() {
+  const toggle = document.querySelector('.n8n-chat .chat-window-toggle');
+  const chatWindow = document.querySelector('.n8n-chat .chat-window');
+  if (!(toggle instanceof HTMLElement)) return;
+
+  toggle.querySelectorAll('svg:not(.custom-icon)').forEach((svg) => { svg.style.display = 'none'; });
+  toggle.querySelectorAll('.custom-icon, .custom-chat-img').forEach((el) => el.remove());
+
+  if (isChatOpen(chatWindow)) {
+    const closeIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    closeIcon.setAttribute('viewBox', '0 0 24 24');
+    closeIcon.setAttribute('width', '24');
+    closeIcon.setAttribute('height', '24');
+    closeIcon.classList.add('custom-icon');
+    closeIcon.innerHTML = '<path fill="#1A1A1A" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
+    toggle.appendChild(closeIcon);
+  } else {
+    const image = document.createElement('img');
+    image.src = CHAT_CONFIG.bubbleIcon;
+    image.alt = 'Chat';
+    image.classList.add('custom-chat-img');
+    image.style.cssText = 'width: 32px; height: 32px; object-fit: contain;';
+    toggle.appendChild(image);
+  }
+
+  toggle.style.backgroundColor = '#FFFFFF';
+  toggle.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)';
+  toggle.style.display = 'flex';
+  toggle.style.alignItems = 'center';
+  toggle.style.justifyContent = 'center';
+}
+
+function customizeSendButton() {
+  const sendButton = document.querySelector('.n8n-chat .chat-input-send-button');
+  if (!sendButton || sendButton.dataset.customized === 'true') return;
+  const svg = sendButton.querySelector('svg');
+  if (svg) {
+    svg.innerHTML = '<path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M12 19V5M5 12l7-7 7 7"/>';
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+  }
+  sendButton.dataset.customized = 'true';
+}
+
+function addBotLabels() {
+  const allMessages = Array.from(document.querySelectorAll('.n8n-chat .chat-message'));
+  document.querySelectorAll('.n8n-chat .chat-message-from-bot').forEach((message) => {
+    const body = message.querySelector('.chat-message-markdown, .chat-message-body');
+    if (!body) return;
+    message.classList.remove('welcome-message');
+    message.querySelector('.welcome-card')?.remove();
+    const existingLabel = message.querySelector('.bot-label');
+    if (existingLabel && existingLabel.parentElement !== message) {
+      existingLabel.remove();
+    } else if (existingLabel) {
+      return;
+    }
+    const messageIndex = allMessages.indexOf(message);
+    const previousMessage = allMessages[messageIndex - 1];
+    if (previousMessage?.classList.contains('chat-message-from-bot')) return;
+    const label = document.createElement('div');
+    label.className = 'bot-label';
+    label.innerHTML = `<img class="bot-label-icon" src="${CHAT_CONFIG.agentIcon}" alt="" width="16" height="16" /><span class="bot-label-text">${CHAT_CONFIG.botName} &middot;</span>`;
+    message.insertBefore(label, body);
+  });
+}
+
+function addPoweredByText() {
+  const footer = document.querySelector('.n8n-chat .chat-footer');
+  if (!footer || footer.querySelector('.powered-by-text')) return;
+  const poweredBy = document.createElement('div');
+  poweredBy.className = 'powered-by-text';
+  poweredBy.innerHTML = `Powered by <strong>${CHAT_CONFIG.companyName}</strong>`;
+  footer.appendChild(poweredBy);
+}
+
+function replaceErrorMessages() {
+  const errorPatterns = ['error in workflow', 'error:', 'failed', 'unable to'];
+  document.querySelectorAll('.n8n-chat .chat-message-from-bot .chat-message-markdown, .n8n-chat .chat-message-from-bot .chat-message-body').forEach((message) => {
+    if (message.dataset.errorReplaced === 'true') return;
+    const text = message.textContent?.toLowerCase() ?? '';
+    if (errorPatterns.some((p) => text.includes(p))) {
+      message.innerHTML = '<p>AI not available</p>';
+      message.dataset.errorReplaced = 'true';
+    }
+  });
+}
+
+function convertImageUrls() {
+  const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?.*)?$/i;
+  const urlPattern = /(https?:\/\/[^\s<>"']+\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?[^\s<>"']*)?)/gi;
+
+  document.querySelectorAll('.n8n-chat .chat-message-markdown, .n8n-chat .chat-message-body').forEach((messageBody) => {
+    if (messageBody.dataset.imagesConverted === 'true') return;
+    const walker = document.createTreeWalker(messageBody, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    let node = walker.nextNode();
+    while (node) {
+      if (node.textContent && urlPattern.test(node.textContent)) textNodes.push(node);
+      urlPattern.lastIndex = 0;
+      node = walker.nextNode();
+    }
+    textNodes.forEach((textNode) => {
+      const text = textNode.textContent ?? '';
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match = urlPattern.exec(text);
+      while (match) {
+        if (match.index > lastIndex) fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        const imageUrl = match[0];
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = 'Image';
+        img.onerror = () => {
+          const link = document.createElement('a');
+          link.href = imageUrl;
+          link.textContent = imageUrl;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.style.wordBreak = 'break-all';
+          img.replaceWith(link);
+        };
+        fragment.appendChild(img);
+        lastIndex = match.index + imageUrl.length;
+        match = urlPattern.exec(text);
+      }
+      if (lastIndex < text.length) fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      textNode.parentNode?.replaceChild(fragment, textNode);
+      urlPattern.lastIndex = 0;
+    });
+    messageBody.querySelectorAll('a').forEach((link) => {
+      if (!imageExtensions.test(link.href) || link.querySelector('img')) return;
+      const img = document.createElement('img');
+      img.src = link.href;
+      img.alt = link.textContent || 'Image';
+      img.onerror = () => { link.style.wordBreak = 'break-all'; };
+      link.replaceChildren(img);
+      link.style.display = 'block';
+    });
+    messageBody.dataset.imagesConverted = 'true';
+  });
+}
+
+function setupImageLightbox() {
+  let lightbox = document.getElementById('chat-lightbox');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.id = 'chat-lightbox';
+    lightbox.innerHTML = '<img id="chat-lightbox-img" alt="Chat attachment preview" /><button id="chat-lightbox-close" type="button" aria-label="Close image preview">x</button>';
+    document.body.appendChild(lightbox);
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target.id === 'chat-lightbox-close') {
+        lightbox.style.display = 'none';
+        lightbox.setAttribute('aria-hidden', 'true');
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.style.display === 'flex') {
+        lightbox.style.display = 'none';
+        lightbox.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+  document.querySelectorAll('.n8n-chat .chat-message-markdown img:not(.bot-label-icon), .n8n-chat .chat-message-body img:not(.bot-label-icon)').forEach((img) => {
+    if (img.dataset.lightboxEnabled === 'true') return;
+    img.dataset.lightboxEnabled = 'true';
+    img.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const lb = document.getElementById('chat-lightbox');
+      const lbImg = document.getElementById('chat-lightbox-img');
+      if (!lb || !lbImg) return;
+      lbImg.src = img.src;
+      lb.style.display = 'flex';
+      lb.setAttribute('aria-hidden', 'false');
+    });
+  });
+}
+
+function runEnhancements() {
+  customizeToggleButton();
+  customizeSendButton();
+  addBotLabels();
+  addPoweredByText();
+  replaceErrorMessages();
+  convertImageUrls();
+  setupImageLightbox();
+}
+
+function setupObservers() {
+  const chatWindow = document.querySelector('.n8n-chat .chat-window');
+  if (!chatWindow) return false;
+
+  new MutationObserver(() => { setTimeout(customizeToggleButton, 10); })
+    .observe(chatWindow, { attributes: true, attributeFilter: ['style', 'class'] });
+
+  const uiObserver = new MutationObserver(runEnhancements);
+  const messageList = document.querySelector('.n8n-chat .chat-messages-list');
+  const chatInput = document.querySelector('.n8n-chat .chat-input');
+  if (messageList) uiObserver.observe(messageList, { childList: true, subtree: true });
+  if (chatInput) uiObserver.observe(chatInput, { childList: true, subtree: true });
+
+  const toggle = document.querySelector('.n8n-chat .chat-window-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      ensureSenderIdentifier();
+      setTimeout(customizeToggleButton, 100);
+    });
+  }
+
+  runEnhancements();
+  return true;
+}
+
+function waitForChat() {
+  if (!setupObservers()) setTimeout(waitForChat, 100);
+}
+
+async function initChat() {
+  const target = document.getElementById('n8n-chat');
+  if (!target) return;
+  target.replaceChildren();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const uid = urlParams.get('uid');
+
+  const chatModule = await import(N8N_CHAT_CDN);
+  const createChat = chatModule.createChat;
+
+  createChat({
+    target: '#n8n-chat',
+    webhookUrl: CHAT_CONFIG.webhookUrl,
+    webhookConfig: { method: 'POST', headers: {} },
+    showWelcomeScreen: false,
+    chatInputKey: 'chatInput',
+    chatSessionKey: 'sessionId',
+    loadPreviousSession: true,
+    metadata: { uid: uid || '' },
+    defaultLanguage: 'en',
+    i18n: {
+      en: {
+        title: '',
+        subtitle: '',
+        footer: '',
+        getStarted: 'New Conversation',
+        inputPlaceholder: 'Reply here...',
+        closeButtonTooltip: 'Close',
+      },
+    },
+    initialMessages: [CHAT_CONFIG.welcomeMessage],
+    allowFileUploads: false,
+    allowedFilesMimeTypes: '',
+    enableStreaming: false,
+  });
+
+  setTimeout(waitForChat, 100);
+}
+
+initChat();
+</script>
+
+</body>
+</html>
